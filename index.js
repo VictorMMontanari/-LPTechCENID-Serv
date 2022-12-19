@@ -79,7 +79,7 @@ app.post("/signin", (req, res)=> {
           console.log("---------> Gerando accessToken"); 
           const token = jwt.sign({id: result}, 's');
           console.log(token);
-          /* res.json({ token: token }); */
+          res.json({ token: token });
         } else {
           res.send("Senha incorreta!");
           console.log("Senha incorreta!")
