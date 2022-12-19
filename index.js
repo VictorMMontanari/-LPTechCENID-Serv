@@ -79,7 +79,7 @@ app.post("/signin", (req, res)=> {
           console.log("---------> Gerando accessToken"); 
           const token = jwt.sign({id: result}, 's');
           console.log(token);
-          res.json({ token: token });
+          res.json({user: result, token: token});
         } else {
           res.send("Senha incorreta!");
           console.log("Senha incorreta!")
@@ -90,38 +90,6 @@ app.post("/signin", (req, res)=> {
   }) //fim do app.post()
 
 /* ------------------------------###-------------------------------- */
-
-/* app.post("/signin", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  console.log(email);
-  console.log(password);
-
-  db.query("SELECT * FROM login WHERE email = ?", [email], (err, result) => {
-    console.log(result);
-    
-    if (err) {
-      res.send(err);
-    }
-    if (result.length > 0) {
-      bcrypt.compare(password, result[0].password, (error, response) => {
-        console.log(response);
-        console.log(password);
-        console.log(response); 
-        if (error) {
-          res.send(error);
-        }
-        if (response) {
-          res.send({ msg: "Usuário logado"});
-        } else {
-          res.send({ msg: "Senha incorreta ASDASDASDASDASDAS" });
-        }
-      });
-    } else {
-      res.send({ msg: "Usuário não registrado!" });
-    }
-  });
-}); */
 
 app.listen(3005, () => {
   console.log("rodando na porta 3005");
