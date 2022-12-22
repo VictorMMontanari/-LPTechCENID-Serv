@@ -69,17 +69,20 @@ app.post("/signin", (req, res)=> {
       }
       else {
         const hasshedPassword = result[0].password;
-        console.log(typeof hasshedPassword);
+        /* console.log(typeof hasshedPassword);
         console.log(typeof password);
-        console.log(await bcrypt.compare(password, hasshedPassword));
+        console.log(await bcrypt.compare(password, hasshedPassword)); */
         
         // obter o hashPassword do result
         if (password === hasshedPassword) {
           console.log("---------> Login bem-sucedido");
           console.log("---------> Gerando accessToken"); 
           const token = jwt.sign({id: result}, 's');
+          console.log();
           console.log(token);
           res.json({user: result, token: token});
+          /* sqlUp = `update login SET token = ${token} Where id = ${id}`; */
+
         } else {
           res.send("Senha incorreta!");
           console.log("Senha incorreta!")
@@ -90,6 +93,22 @@ app.post("/signin", (req, res)=> {
   }) //fim do app.post()
 
 /* ------------------------------###-------------------------------- */
+
+/* app.post("/validate", (req, res)=> {
+  const token = req.body.token;
+  db.getConnection ( async (db)=> { 
+  const sqlSearch = "SELECT * FROM login WHERE email = ?" 
+  const search_query = mysql.format(sqlSearch,[email])
+  db.query(search_query, async (result) => {
+      db.release()
+      console.log(result); 
+      if (email) {
+        res.json({user: result})
+      }
+    })
+  })
+}) */
+
 
 app.listen(3005, () => {
   console.log("rodando na porta 3005");
