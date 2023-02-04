@@ -78,10 +78,32 @@ app.post("/signin", (req, res)=> {
           console.log("---------> Login bem-sucedido");
           console.log("---------> Gerando accessToken"); 
           const token = jwt.sign({id: result}, 's');
-          console.log();
+          console.log(result);
+          /* results = JSON.stringify(result[0]);
+          id = results;
+          console.log(id); */
+          var resultado = result;
+          var ids = [];
+          for(i = 0; i< resultado.length; i++){    
+              if(ids.indexOf(resultado[i].id) === -1){
+                  ids.push(resultado[i].id);        
+              }        
+          }
+          for(i = 0; i< ids.length; i++){
+              id = ids[i];     
+          }
+          console.log(id);
           console.log(token);
           res.json({user: result, token: token});
-          /* sqlUp = `update login SET token = ${token} Where id = ${id}`; */
+          sqlUp = `update login SET token = ${token} Where id = ${id}`;
+          if (token != "") {
+
+            db.query("update login SET token = ? Where id = ?", [token, id], (err, result) => {
+              if (err) {
+                res.send(err);
+              }
+            });
+          }
 
         } else {
           res.send("Senha incorreta!");
