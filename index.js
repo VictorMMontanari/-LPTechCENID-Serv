@@ -95,9 +95,8 @@ app.post("/signin", (req, res)=> {
           console.log(id);
           console.log(token);
           res.json({user: result, token: token});
-          sqlUp = `update login SET token = ${token} Where id = ${id}`;
+        
           if (token != "") {
-
             db.query("update login SET token = ? Where id = ?", [token, id], (err, result) => {
               if (err) {
                 res.send(err);
