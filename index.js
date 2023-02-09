@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const e = require("express");
 const jwt = require('jsonwebtoken');
 const saltRounds = 10;
+const jwt_decode = require('jwt-decode');
+
 
 const db = mysql.createPool({
   host: "localhost",
@@ -13,6 +15,7 @@ const db = mysql.createPool({
   password: "SAc701@@",
   database: "loginT",
 });
+
 
 app.use(express.json());
 app.use(cors());
@@ -51,16 +54,12 @@ app.post("/signin", (req, res)=> {
   const email = req.body.email;
   const password = req.body.password;
 
-  console.log(email);
-  console.log(password);
   db.getConnection ( async (err, db)=> {
   if (err) throw (err) 
   const sqlSearch = "SELECT * FROM login WHERE email = ?" 
   const search_query = mysql.format(sqlSearch,[email])
   db.query(search_query, async (err, result) => {
       db.release()
-      console.log(result);
-
       if (err)
         throw (err);
       if (result.length == 0) {
@@ -69,41 +68,11 @@ app.post("/signin", (req, res)=> {
       }
       else {
         const hasshedPassword = result[0].password;
-        /* console.log(typeof hasshedPassword);
-        console.log(typeof password);
-        console.log(await bcrypt.compare(password, hasshedPassword)); */
-        
-        // obter o hashPassword do result
         if (password === hasshedPassword) {
           console.log("---------> Login bem-sucedido");
-          console.log("---------> Gerando accessToken"); 
-          const token = jwt.sign({id: result}, 's');
-          console.log(result);
-          /* results = JSON.stringify(result[0]);
-          id = results;
-          console.log(id); */
-          var resultado = result;
-          var ids = [];
-          for(i = 0; i< resultado.length; i++){    
-              if(ids.indexOf(resultado[i].id) === -1){
-                  ids.push(resultado[i].id);        
-              }        
-          }
-          for(i = 0; i< ids.length; i++){
-              id = ids[i];     
-          }
-          console.log(id);
-          console.log(token);
+          console.log("---------> Gerando accessToken");
+          const token = jwt.sign({id: result}, 's', {expiresIn: 5});
           res.json({user: result, token: token});
-        
-          if (token != "") {
-            db.query("update login SET token = ? Where id = ?", [token, id], (err, result) => {
-              if (err) {
-                res.send(err);
-              }
-            });
-          }
-
         } else {
           res.send("Senha incorreta!");
           console.log("Senha incorreta!")
@@ -115,21 +84,29 @@ app.post("/signin", (req, res)=> {
 
 /* ------------------------------###-------------------------------- */
 
-/* app.post("/validate", (req, res)=> {
-  const token = req.body.token;
-  db.getConnection ( async (db)=> { 
-  const sqlSearch = "SELECT * FROM login WHERE email = ?" 
-  const search_query = mysql.format(sqlSearch,[email])
-  db.query(search_query, async (result) => {
-      db.release()
-      console.log(result); 
-      if (email) {
-        res.json({user: result})
-      }
-    })
-  })
-}) */
+app.post("/validate", async (req, res) => {
+  const {token} = req.body;
 
+  try {
+    if (token) {
+      decoded = jwt_decode(token);
+      result=(Object.keys(decoded).map(function(prop){ return decoded[prop];}))[0][0];
+      res.json({status: true, user: result}).stop
+    } else {
+      res.json({status: false})
+    } 
+  } catch(error) {
+      return res.status(500).json({error: error})
+  }
+});
+
+
+app.post('/logout', function(req, res) {
+  // remove the req.user property and clear the login session
+  req.logout();
+  req.session = null;
+  res.redirect('/');
+});
 
 app.listen(3005, () => {
   console.log("rodando na porta 3005");
