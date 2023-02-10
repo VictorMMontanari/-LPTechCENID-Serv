@@ -102,7 +102,7 @@ app.post("/validate", async (req, res) => {
 
 
 app.post('/logout', function(req, res) {
-  // remove the req.user property and clear the login session
+  // remove a propriedade req.user e limpa a sessão de login
   req.logout();
   req.session = null;
   res.redirect('/');
