@@ -23,15 +23,19 @@ app.use(cors());
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const name = req.body.name;
+  const type = req.body.type;
+  const phone = req.body.phone;
+  const ra = req.body.ra;
 
   db.query("SELECT * FROM login WHERE email = ?", [email], (err, result) => {
     if (err) {
       res.send(err);
     }
     if (result.length == 0) {
-      bcrypt.hash(password, saltRounds, (err, hash) => {
+      bcrypt.hash(password, name, type, phone, ra, saltRounds, (err, hash) => {
         db.query(
-          "INSERT INTO login (email, password) VALUE (?,?)",
+          "INSERT INTO login (email, password, name, type, phone, ra) VALUE (?,?,?,?,?,?)",
           [email, hash],
           (error, response) => {
             if (err) {
@@ -95,6 +99,7 @@ app.post("/validate", async (req, res) => {
     } else {
       res.json({status: false})
     } 
+
   } catch(error) {
       return res.status(500).json({error: error})
   }
