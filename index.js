@@ -24,29 +24,32 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const name = req.body.name;
-  const type = req.body.type;
+ /*  const type = req.body.type;
   const phone = req.body.phone;
-  const ra = req.body.ra;
-
-  db.query("SELECT * FROM login WHERE email = ?", [email], (err, result) => {
+  const ra = req.body.ra; */
+  console.log(email)
+  console.log(password)
+  console.log(name)
+  db.query("SELECT * FROM login WHERE email = ?;", [email], (err, result) => {
     if (err) {
       res.send(err);
     }
     if (result.length == 0) {
-      bcrypt.hash(password, name, type, phone, ra, saltRounds, (err, hash) => {
+      bcrypt.hash(password, saltRounds, (err, hash) => {
         db.query(
-          "INSERT INTO login (email, password, name, type, phone, ra) VALUE (?,?,?,?,?,?)",
+          "INSERT INTO login (email, password) VALUE (?,?);",
           [email, hash],
           (error, response) => {
             if (err) {
               res.send(err);
             }
-
             res.send({ msg: "Usuário cadastrado com sucesso" });
+            console.log("TRUE")
           }
         );
       });
     } else {
+      console.log("Falso")
       res.send({ msg: "Email já cadastrado" });
     }
   });
@@ -94,7 +97,7 @@ app.post("/validate", async (req, res) => {
   try {
     if (token) {
       decoded = jwt_decode(token);
-      result=(Object.keys(decoded).map(function(prop){ return decoded[prop];}))[0][0];
+      result = (Object.keys(decoded).map(function(prop){ return decoded[prop];}))[0][0];
       res.json({status: true, user: result}).stop
     } else {
       res.json({status: false})
