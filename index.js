@@ -5,7 +5,6 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const e = require("express");
 const jwt = require('jsonwebtoken');
-const saltRounds = 10;
 const jwt_decode = require('jwt-decode');
 
 
@@ -16,7 +15,6 @@ const db = mysql.createPool({
   database: "loginT",
 });
 
-
 app.use(express.json());
 app.use(cors());
 
@@ -24,35 +22,36 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const name = req.body.name;
- /*  const type = req.body.type;
+  const type = req.body.type;
   const phone = req.body.phone;
-  const ra = req.body.ra; */
-  console.log(email)
+  const ra = req.body.ra;
+
   console.log(password)
-  console.log(name)
+
   db.query("SELECT * FROM login WHERE email = ?;", [email], (err, result) => {
     if (err) {
-      res.send(err);
-    }
-    if (result.length == 0) {
-      bcrypt.hash(password, saltRounds, (err, hash) => {
-        db.query(
-          "INSERT INTO login (email, password) VALUE (?,?);",
-          [email, hash],
-          (error, response) => {
-            if (err) {
-              res.send(err);
-            }
+      console.error(err);
+      res.status(500).send({ msg: "Erro ao verificar email" });
+    } else if (result.length == 0) {
+      const hash = password; // Assuming this function exists
+      db.query(
+        "INSERT INTO login (email, password, name, type, phone, ra) VALUES (?,?,?,?,?,?);",
+        [email, hash, name, type, phone, ra],
+        (error, response) => {
+          if (error) {
+            console.error(error);
+            res.status(500).send({ msg: "Erro ao cadastrar usuário" });
+          } else {
+            console.log(response);
             res.send({ msg: "Usuário cadastrado com sucesso" });
-            console.log("TRUE")
           }
-        );
-      });
+        }
+      );
     } else {
-      console.log("Falso")
+      console.log("Email já cadastrado");
       res.send({ msg: "Email já cadastrado" });
     }
-  });
+  });  
 });
 
 /* ------------------------------###-------------------------------- */
@@ -65,7 +64,7 @@ app.post("/signin", (req, res)=> {
   if (err) throw (err) 
   const sqlSearch = "SELECT * FROM login WHERE email = ?" 
   const search_query = mysql.format(sqlSearch,[email])
-  db.query(search_query, async (err, result) => {
+    db.query(search_query, async (err, result) => {
       db.release()
       if (err)
         throw (err);
@@ -85,9 +84,9 @@ app.post("/signin", (req, res)=> {
           console.log("Senha incorreta!")
         } //fim da senha incorreta
       } // fim do email existe
-    }) //fim da conexão.query() 
-  }) //fim do db.connection()
-  }) //fim do app.post()
+    })
+  }) //fim da conexão.query() 
+}) //fim do db.connection() /
 
 /* ------------------------------###-------------------------------- */
 
@@ -97,7 +96,7 @@ app.post("/validate", async (req, res) => {
   try {
     if (token) {
       decoded = jwt_decode(token);
-      result = (Object.keys(decoded).map(function(prop){ return decoded[prop];}))[0][0];
+      result = (Object.keys(decoded).map(function(prop){return decoded[prop];}))[0][0];
       res.json({status: true, user: result}).stop
     } else {
       res.json({status: false})
