@@ -49,10 +49,45 @@ app.post("/register", (req, res) => {
       );
     } else {
       console.log("Email já cadastrado");
+      
       res.send({ msg: "Email já cadastrado" });
     }
   });  
 });
+
+/* ------------------------------###-------------------------------- */
+
+
+app.post("/tabela", async (req, res) => {
+  const query_usuario = "SELECT id, name, email, type, phone, ra FROM login order by id;";
+  const result_usuario = await fetch('url/to/api/endpoint', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: query_usuario
+    })
+  });
+
+  if (result_usuario.ok) {
+    const data = await result_usuario.json();
+    const lista_usuarios = { records: {} };
+
+    for (let i = 0; i < data.length; i++) {
+      const { id, name, email, type, phone, ra } = data[i];
+
+      lista_usuarios.records[id] = { id, name, email, type, phone, ra };
+    }
+    console.log(lista_usuarios);
+    // Retornar os produtos em formato json
+    res.status(200).json(lista_usuarios);
+  } else {
+    // Se a requisição não for bem-sucedida, enviar uma resposta de erro
+    res.status(result_usuario.status).json({ error: "Erro ao buscar usuario" });
+  }
+}); 
+
 
 /* ------------------------------###-------------------------------- */
 
