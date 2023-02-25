@@ -25,7 +25,8 @@ app.post("/register", (req, res) => {
   const type = req.body.type;
   const phone = req.body.phone;
   const ra = req.body.ra;
-
+  const curso = req.body.curso;
+  const cpf = req.body.cpf;
   console.log(password)
 
   db.query("SELECT * FROM login WHERE email = ?;", [email], (err, result) => {
@@ -35,8 +36,8 @@ app.post("/register", (req, res) => {
     } else if (result.length == 0) {
       const hash = password; // Assuming this function exists
       db.query(
-        "INSERT INTO login (email, password, name, type, phone, ra) VALUES (?,?,?,?,?,?);",
-        [email, hash, name, type, phone, ra],
+        "INSERT INTO login (email, password, name, type, phone, ra, curso, cpf) VALUES (?,?,?,?,?,?,?,?);",
+        [email, hash, name, type, phone, ra, curso, cpf],
         (error, response) => {
           if (error) {
             console.error(error);
@@ -58,8 +59,27 @@ app.post("/register", (req, res) => {
 /* ------------------------------###-------------------------------- */
 
 
-app.post("/tabela", async (req, res) => {
-  const query_usuario = "SELECT id, name, email, type, phone, ra FROM login order by id;";
+app.post('/tabela', async (req, res) => {
+  const query_usuario = "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;";
+  try {
+    const [rows] = await connection.execute(query_usuario);
+
+    const lista_usuarios = { records: {} };
+    for (let i = 0; i < rows.length; i++) {
+      const { id, name, email, type, phone, ra, curso, cpf } = rows[i];
+      lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
+    }
+
+    res.json(lista_usuarios);
+    console.log(lista_usuarios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar usuário" });
+  }
+});
+
+/* app.post("/tabela", async (req, res) => {
+  const query_usuario = "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;";
   const result_usuario = await fetch('url/to/api/endpoint', {
     method: 'POST',
     headers: {
@@ -75,9 +95,9 @@ app.post("/tabela", async (req, res) => {
     const lista_usuarios = { records: {} };
 
     for (let i = 0; i < data.length; i++) {
-      const { id, name, email, type, phone, ra } = data[i];
+      const { id, name, email, type, phone, ra, curso, cpf } = data[i];
 
-      lista_usuarios.records[id] = { id, name, email, type, phone, ra };
+      lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
     }
     console.log(lista_usuarios);
     // Retornar os produtos em formato json
@@ -86,7 +106,7 @@ app.post("/tabela", async (req, res) => {
     // Se a requisição não for bem-sucedida, enviar uma resposta de erro
     res.status(result_usuario.status).json({ error: "Erro ao buscar usuario" });
   }
-}); 
+});  */
 
 
 /* ------------------------------###-------------------------------- */
