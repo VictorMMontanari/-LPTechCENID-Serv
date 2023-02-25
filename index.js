@@ -60,53 +60,32 @@ app.post("/register", (req, res) => {
 
 
 app.post('/tabela', async (req, res) => {
-  const query_usuario = "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;";
-  try {
-    const [rows] = await connection.execute(query_usuario);
-
-    const lista_usuarios = { records: {} };
-    for (let i = 0; i < rows.length; i++) {
-      const { id, name, email, type, phone, ra, curso, cpf } = rows[i];
-      lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
+  console.log("ok")
+  
+  db.query(
+    "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;",
+    (error, response) => {
+      try {
+        if (error) {
+          console.error(error);
+          res.status(500).send({ msg: "Erro ao cadastrar usuário" });
+        } else {
+          const lista_usuarios = { records: {} };
+          for (let i = 0; i < response.length; i++) {
+            const { id, name, email, type, phone, ra, curso, cpf } = response[i];
+            lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
+          }
+          
+          res.json(lista_usuarios);
+          console.log(lista_usuarios);
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar usuário" });
+      }
     }
-
-    res.json(lista_usuarios);
-    console.log(lista_usuarios);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Erro ao buscar usuário" });
-  }
+  );
 });
-
-/* app.post("/tabela", async (req, res) => {
-  const query_usuario = "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;";
-  const result_usuario = await fetch('url/to/api/endpoint', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: query_usuario
-    })
-  });
-
-  if (result_usuario.ok) {
-    const data = await result_usuario.json();
-    const lista_usuarios = { records: {} };
-
-    for (let i = 0; i < data.length; i++) {
-      const { id, name, email, type, phone, ra, curso, cpf } = data[i];
-
-      lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
-    }
-    console.log(lista_usuarios);
-    // Retornar os produtos em formato json
-    res.status(200).json(lista_usuarios);
-  } else {
-    // Se a requisição não for bem-sucedida, enviar uma resposta de erro
-    res.status(result_usuario.status).json({ error: "Erro ao buscar usuario" });
-  }
-});  */
 
 
 /* ------------------------------###-------------------------------- */
