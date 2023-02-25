@@ -60,7 +60,6 @@ app.post("/register", (req, res) => {
 
 
 app.post('/tabela', async (req, res) => {
-  console.log("ok")
   
   db.query(
     "SELECT id, name, email, type, phone, ra, curso, cpf FROM login order by id;",
