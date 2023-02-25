@@ -11,7 +11,7 @@ const jwt_decode = require('jwt-decode');
 const db = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "SAc701@@",
+  password: "",
   database: "loginT",
 });
 
