@@ -58,7 +58,6 @@ app.post("/register", (req, res) => {
 
 /* ------------------------------###-------------------------------- */
 
-
 app.post('/tabela', async (req, res) => {
   
   db.query(
@@ -74,9 +73,7 @@ app.post('/tabela', async (req, res) => {
             const { id, name, email, type, phone, ra, curso, cpf } = response[i];
             lista_usuarios.records[id] = { id, name, email, type, phone, ra, curso, cpf };
           }
-          
           res.json(lista_usuarios);
-          console.log(lista_usuarios);
         }
       } catch (error) {
         console.error(error);
