@@ -18,43 +18,9 @@ const db = mysql.createPool({
 app.use(express.json());
 app.use(cors());
 
-app.post("/registernovo", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const name = req.body.name;
-  const type = req.body.type;
-  const phone = req.body.phone;
-  const ra = req.body.ra;
-  const curso = req.body.curso;
-  const cpf = req.body.cpf;
-  
 
-  db.query("SELECT * FROM pacientes WHERE cpf = ?;", [cpf], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send({ msg: "Erro ao verificar cpf" });
-    } else if (result.length == 0) {
-      const hash = password; // Assuming this function exists
-      db.query(
-        "INSERT INTO pacientes (nome, cpf, cartao_sus, rg, telefone, data_nascimento, email, ocupacao, sexo, endereco, municipio, numero, tipo_atendimento, diagnostico, outras_formas_dm, data_diagnostico, gestante, semanas_gestacao, amamentando, tempo_pos_parto, deficiencia, tipo_deficiencia, historico_dm1, parentesco_dm1, historico_dm2, parentesco_dm2, historico_outras_formas_dm, parentesco_outras_formas_dm, metodo_insulina, marca_modelo_bomba, metodo_monitoramento_glicemia, marca_modelo_glicometro_sensor, uso_app_glicemia, outros_apps, nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel, telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel, arquivo, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); INSERT INTO pacientes_login (paciente_id, login_id) VALUES (?, ?);",
-        [email, hash, name, type, phone, ra, curso, cpf],
-        (error, response) => {
-          if (error) {
-            console.error(error);
-            res.status(500).send({ msg: "Erro ao cadastrar usuário" });
-          } else {
-            console.log("teste",response);
-            res.send({ msg: "Usuário cadastrado com sucesso" });
-          }
-        }
-      );
-    } else {
-      console.log("Email já cadastrado");
-      
-      res.send({ msg: "Email já cadastrado" });
-    }
-  });  
-});
+
+/* ------------------------------###-------------------------------- */
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
