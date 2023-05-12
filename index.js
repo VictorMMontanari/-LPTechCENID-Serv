@@ -172,7 +172,7 @@ app.post("/signin", (req, res)=> {
 
 app.post("/validate", async (req, res) => {
   const {token} = req.body;
-
+  
   try {
     if (token) {
       decoded = jwt_decode(token);
