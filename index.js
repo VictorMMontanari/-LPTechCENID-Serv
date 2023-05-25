@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 const mysql = require("mysql");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const e = require("express");
 const jwt = require('jsonwebtoken');
 const jwt_decode = require('jwt-decode');
 
@@ -14,16 +14,54 @@ const db = mysql.createPool({
   database: "loginT",
 });
 
-app.use(express.json());
+// configurando o body-parser
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(cors());
+
+app.post('/tabelaPaciente', (req, res) => {
+  const searchTerm = req.body.searchTerm;
+  const columns = req.body.columns || [];
+  console.log(searchTerm);
+  
+  if (searchTerm.length >= 3) {
+    let query = `SELECT * FROM pacientes WHERE (`;
+    
+    columns.forEach((column, index) => {
+      if (index !== 0) {
+        query += ' OR ';
+      }
+      query += `${column} LIKE '%${searchTerm}%'`;
+    });
+
+    query += `)`;
+
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error('Erro ao executar a consulta:', err);
+        res.status(500).json({ error: 'Ocorreu um erro ao executar a consulta' });
+      } else {
+        res.json(results);
+        console.log(results);
+      }
+    });
+  } else {
+    res.status(400).json({ error: 'O termo de pesquisa deve ter pelo menos três caracteres' });
+  }
+});
+
+//----------------------------------------------------------------------------------------------------------------------------//
 
 app.post("/registernovo", (req, res) => {
   const { datecadastro, nome, cpfForm, cartao_sus, rg, telefone, data_nascimento, email, ocupacao, sexo, endereco, municipio, numero, tipo_atendimento,
     diagnostico, outras_formas_dm, data_diagnostico, gestante, semanas_gestacao, amamentando, tempo_pos_parto, deficiencia, tipo_deficiencia, historico_dm1, parentesco_dm1, historico_dm2, parentesco_dm2, historico_outras_formas_dm, parentesco_outras_formas_dm , metodo_insulina, 
     marca_modelo_bomba, metodo_monitoramento_glicemia, marca_modelo_glicometro_sensor, uso_app_glicemia, outros_apps, nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel , 
-    telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel , arquivo, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, idLogin } = req.body;
-    console.log(idLogin);
-  
+    telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel , anexar, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, idLogin } = req.body;
+
+  const objetoSerializado = JSON.stringify(anexar);
+  const pdfBuffer = Buffer.from(objetoSerializado.split(",")[1], "base64");
+
   db.query("SELECT * FROM pacientes WHERE cpf = ?;", [cpfForm], (err, result) => {
     if (err) {
       console.error(err);
@@ -33,11 +71,11 @@ app.post("/registernovo", (req, res) => {
       res.send({ msg: "CPF já cadastrado" });
     } else {
       db.query(
-        "INSERT INTO pacientes (nome, cpf, cartao_sus, rg, telefone, data_nascimento, email, ocupacao, sexo, endereco, municipio, numero, tipo_atendimento, diagnostico, outras_formas_dm, data_diagnostico, gestante, semanas_gestacao, amamentando, tempo_pos_parto, deficiencia, tipo_deficiencia, historico_dm1, parentesco_dm1, historico_dm2, parentesco_dm2, historico_outras_formas_dm, parentesco_outras_formas_dm, metodo_insulina, marca_modelo_bomba, metodo_monitoramento_glicemia, marca_modelo_glicometro_sensor, uso_app_glicemia, outros_apps, nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel, telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel, arquivo, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, datecadastro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "INSERT INTO pacientes (nome, cpf, cartao_sus, rg, telefone, data_nascimento, email, ocupacao, sexo, endereco, municipio, numero, tipo_atendimento, diagnostico, outras_formas_dm, data_diagnostico, gestante, semanas_gestacao, amamentando, tempo_pos_parto, deficiencia, tipo_deficiencia, historico_dm1, parentesco_dm1, historico_dm2, parentesco_dm2, historico_outras_formas_dm, parentesco_outras_formas_dm, metodo_insulina, marca_modelo_bomba, metodo_monitoramento_glicemia, marca_modelo_glicometro_sensor, uso_app_glicemia, outros_apps, nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel, telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel, anexar, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, datecadastro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
         [nome, cpfForm, cartao_sus, rg, telefone, data_nascimento, email, ocupacao, sexo, endereco, municipio, numero, tipo_atendimento,
           diagnostico, outras_formas_dm, data_diagnostico, gestante, semanas_gestacao, amamentando, tempo_pos_parto, deficiencia, tipo_deficiencia, historico_dm1, parentesco_dm1, historico_dm2, parentesco_dm2, historico_outras_formas_dm, parentesco_outras_formas_dm , metodo_insulina, 
           marca_modelo_bomba, metodo_monitoramento_glicemia, marca_modelo_glicometro_sensor, uso_app_glicemia, outros_apps, nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel , 
-          telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel , arquivo, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, datecadastro],
+          telefone_responsavel, ocupacao_responsavel, data_nascimento_responsavel , pdfBuffer, auxilio, outros_auxilios, possui_celular_com_acesso_a_internet, datecadastro],
         (error, response) => {
           if (error) {
             console.error(error);
