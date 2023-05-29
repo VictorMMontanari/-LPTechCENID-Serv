@@ -23,7 +23,6 @@ app.use(cors());
 app.post('/tabelaPaciente', (req, res) => {
   const searchTerm = req.body.searchTerm;
   const columns = req.body.columns || [];
-  console.log(searchTerm);
   
   if (searchTerm.length >= 3) {
     let query = `SELECT * FROM pacientes WHERE (`;
@@ -43,7 +42,6 @@ app.post('/tabelaPaciente', (req, res) => {
         res.status(500).json({ error: 'Ocorreu um erro ao executar a consulta' });
       } else {
         res.json(results);
-        console.log(results);
       }
     });
   } else {
