@@ -42,11 +42,22 @@ app.post('/tabelaPaciente', (req, res) => {
         res.status(500).json({ error: 'Ocorreu um erro ao executar a consulta' });
       } else {
         res.json(results);
+        console.log(results);
       }
     });
   } else {
     res.status(400).json({ error: 'O termo de pesquisa deve ter pelo menos três caracteres' });
   }
+});
+
+//----------------------------------------------------------------------------------------------------------------------------//
+
+app.post("/atualizar", (req, res) => {
+  const { id, nome, cpf, rg, sus, data_nascimento, telefone, selectsexo, endereco, numero, 
+    nome_responsavel, cpf_responsavel, rg_responsavel, parentesco_responsavel, telefone_responsavel, ocupacao_responsavel,
+    data_nascimento_responsavel } = req.body;
+  console.log(id); 
+  /* db.query */
 });
 
 //----------------------------------------------------------------------------------------------------------------------------//
