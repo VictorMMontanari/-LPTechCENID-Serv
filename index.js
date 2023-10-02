@@ -42,7 +42,6 @@ app.post('/tabelaPaciente', (req, res) => {
         res.status(500).json({ error: 'Ocorreu um erro ao executar a consulta' });
       } else {
         res.json(results);
-        console.log(results);
       }
     });
   } else {
