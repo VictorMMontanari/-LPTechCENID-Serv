@@ -1,7 +1,58 @@
-SELECT * FROM loginT.login;
+use loginT;
+
+CREATE TABLE `pacientes` (
+  `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) DEFAULT NULL,
+  `cpf` varchar(11) DEFAULT NULL,
+  `cartao_sus` varchar(20) DEFAULT NULL,
+  `rg` varchar(20) DEFAULT NULL,
+  `telefone` varchar(20) DEFAULT NULL,
+  `data_nascimento` date DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `ocupacao` varchar(50) DEFAULT NULL,
+  `sexo` varchar(10) DEFAULT NULL,
+  `endereco` varchar(255) DEFAULT NULL,
+  `municipio` varchar(50) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `tipo_atendimento` varchar(50) DEFAULT NULL,
+  `diagnostico` varchar(50) DEFAULT NULL,
+  `outras_formas_dm` varchar(50) DEFAULT NULL,
+  `data_diagnostico` date DEFAULT NULL,
+  `gestante` char(3) DEFAULT NULL,
+  `semanas_gestacao` int DEFAULT NULL,
+  `amamentando` char(3) DEFAULT NULL,
+  `tempo_pos_parto` varchar(20) DEFAULT NULL,
+  `deficiencia` char(3) DEFAULT NULL,
+  `tipo_deficiencia` varchar(50) DEFAULT NULL,
+  `historico_dm1` char(3) DEFAULT NULL,
+  `parentesco_dm1` varchar(50) DEFAULT NULL,
+  `historico_dm2` char(3) DEFAULT NULL,
+  `parentesco_dm2` varchar(50) DEFAULT NULL,
+  `historico_outras_formas_dm` char(3) DEFAULT NULL,
+  `parentesco_outras_formas_dm` varchar(50) DEFAULT NULL,
+  `metodo_insulina` varchar(50) DEFAULT NULL,
+  `marca_modelo_bomba` varchar(50) DEFAULT NULL,
+  `metodo_monitoramento_glicemia` varchar(50) DEFAULT NULL,
+  `marca_modelo_glicometro_sensor` varchar(50) DEFAULT NULL,
+  `uso_app_glicemia` varchar(50) DEFAULT NULL,
+  `outros_apps` varchar(255) DEFAULT NULL,
+  `nome_responsavel` varchar(255) DEFAULT NULL,
+  `cpf_responsavel` varchar(20) DEFAULT NULL,
+  `rg_responsavel` varchar(20) DEFAULT NULL,
+  `parentesco_responsavel` varchar(50) DEFAULT NULL,
+  `telefone_responsavel` varchar(20) DEFAULT NULL,
+  `ocupacao_responsavel` varchar(50) DEFAULT NULL,
+  `data_nascimento_responsavel` date DEFAULT NULL,
+  `anexar` blob,
+  `auxilio` varchar(50) DEFAULT NULL,
+  `outros_auxilios` varchar(255) DEFAULT NULL,
+  `possui_celular_com_acesso_a_internet` char(3) DEFAULT NULL,
+  `datecadastro` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `login` (
-  `id` int(5) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(200) NOT NULL,
   `password` varchar(200) NOT NULL,
   `name` varchar(200) NOT NULL,
@@ -11,71 +62,13 @@ CREATE TABLE `login` (
   `curso` varchar(45) NOT NULL,
   `cpf` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE pacientes (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  nome VARCHAR(255),
-  cpf VARCHAR(11),
-  cartao_sus VARCHAR(20),
-  rg VARCHAR(20),
-  telefone VARCHAR(20),
-  data_nascimento DATE,
-  email VARCHAR(255),
-  ocupacao VARCHAR(50),
-  sexo VARCHAR(10),
-  endereco VARCHAR(255),
-  municipio VARCHAR(50),
-  numero VARCHAR(10),
-  tipo_atendimento VARCHAR(50),
-  diagnostico VARCHAR(50),
-  outras_formas_dm VARCHAR(50),
-  data_diagnostico DATE,
-  
-  gestante CHAR(3),
-  semanas_gestacao INT,
-  amamentando CHAR(3),
-  tempo_pos_parto VARCHAR(20),
-  
-  deficiencia CHAR(3),
-  tipo_deficiencia VARCHAR(50),
-  
-  historico_dm1 CHAR(3),
-  parentesco_dm1 VARCHAR(50),
-  
-  historico_dm2 CHAR(3),
-  parentesco_dm2 VARCHAR(50),
-  
-  historico_outras_formas_dm CHAR(3),
-  parentesco_outras_formas_dm VARCHAR(50),
-  
-  metodo_insulina VARCHAR(50),
-  marca_modelo_bomba VARCHAR(50),
-  
-  metodo_monitoramento_glicemia VARCHAR(50),
-  marca_modelo_glicometro_sensor VARCHAR(50),
-  
-  uso_app_glicemia VARCHAR(50),
-  outros_apps VARCHAR(255),
-  
-  nome_responsavel VARCHAR(255),
-  cpf_responsavel VARCHAR(11),
-  rg_responsavel VARCHAR(20),
-  parentesco_responsavel VARCHAR(50),
-  telefone_responsavel VARCHAR(20),
-  ocupacao_responsavel VARCHAR(50),
-  data_nascimento_responsavel DATE,
-  
-  arquivo BLOB,
-  auxilio VARCHAR(50),
-  outros_auxilios VARCHAR(255),
-  possui_celular_com_acesso_a_internet CHAR(3)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `pacientes_login` (
-  `paciente_id` int(5) unsigned zerofill NOT NULL,
-  `login_id` int(5) unsigned zerofill NOT NULL,
-  PRIMARY KEY (`paciente_id`, `login_id`),
-  FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`login_id`) REFERENCES `login` (`id`) ON DELETE CASCADE
+  `paciente_id` int(5) unsigned NOT NULL,
+  `login_id` int(5) unsigned NOT NULL,
+  PRIMARY KEY (`paciente_id`,`login_id`),
+  KEY `login_id` (`login_id`),
+  CONSTRAINT `pacientes_login_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `pacientes_login_ibfk_2` FOREIGN KEY (`login_id`) REFERENCES `login` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
