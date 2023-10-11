@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
@@ -10,7 +10,7 @@ const jwt_decode = require('jwt-decode');
 const db = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "Root32@@",
+  password: "SAc701##",
   database: "loginT",
 });
 
@@ -104,7 +104,7 @@ app.post("/registernovo", (req, res) => {
             const login_id = idLogin;
 
             db.query(
-              "INSERT INTO pacientes_login (paciente_id, login_id) VALUES (?, ?)",
+              "INSERT INTO pacientes_login (paciente_id, login_id) VALUES (?, ?);",
               [paciente_id, login_id],
               (err, result) => {
                 if (err) {
