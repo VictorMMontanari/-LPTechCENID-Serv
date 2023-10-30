@@ -165,6 +165,41 @@ app.post("/register", (req, res) => {
 
 /* ------------------------------###-------------------------------- */
 
+app.put("/update/:id", (req, res) => {
+  const userId = req.params.id; // Parâmetro de rota para identificar o usuário a ser atualizado
+  const { email, password, name, type, phone, ra, curso, cpf } = req.body;
+
+  // Verifique se o usuário existe com base no ID
+  db.query("SELECT * FROM login WHERE id = ?;", [userId], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send({ msg: "Erro ao buscar o usuário" });
+    } else if (result.length === 0) {
+      res.status(404).send({ msg: "Usuário não encontrado" });
+    } else {
+      // Atualize as informações do usuário
+      const hash = password; // Lembre-se de usar uma função segura para hash de senhas
+
+      db.query(
+        "UPDATE login SET email=?, password=?, name=?, type=?, phone=?, ra=?, curso=?, cpf=? WHERE id = ?;",
+        [email, hash, name, type, phone, ra, curso, cpf, userId],
+        (error, response) => {
+          if (error) {
+            console.error(error);
+            res.status(500).send({ msg: "Erro ao atualizar o usuário" });
+          } else {
+            console.log("Usuário atualizado com sucesso");
+            res.status(200).send({ msg: "Usuário atualizado com sucesso" });
+          }
+        }
+      );
+    }
+  });
+});
+
+
+/* ------------------------------###-------------------------------- */
+
 app.post('/tabela', async (req, res) => {
 
   db.query(
