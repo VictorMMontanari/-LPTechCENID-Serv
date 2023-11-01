@@ -72,3 +72,16 @@ CREATE TABLE `pacientes_login` (
   CONSTRAINT `pacientes_login_ibfk_1` FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`) ON DELETE CASCADE,
   CONSTRAINT `pacientes_login_ibfk_2` FOREIGN KEY (`login_id`) REFERENCES `login` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `agendamentos` (
+  `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
+  `paciente_id` int(5) unsigned NOT NULL,
+  `data_agendamento` DATETIME NOT NULL,
+  `hora_agendamento` TIME NOT NULL,
+  `especialidade_med` varchar(40) NOT NULL,
+  `observacao` TEXT,
+  `usuario_id` int(5) unsigned,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`paciente_id`) REFERENCES `pacientes` (`id`),
+  FOREIGN KEY (`usuario_id`) REFERENCES `login` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
