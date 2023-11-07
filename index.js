@@ -262,6 +262,30 @@ app.post("/signin", (req, res) => {
 
 /* ------------------------------###-------------------------------- */
 
+app.post("/agendar", (req, res) => {
+  const idpaciente = req.body.idpaciente;
+  const userid = req.body.userid;
+  const dataconsulta = req.body.dataconsulta;
+  const hora = req.body.hora;
+  const espmed = req.body.espmed;
+  const obser = req.body.obser;
+
+  // Exemplo de código para inserir dados na tabela agendamentos
+  const query = "INSERT INTO agendamentos (paciente_id, data_agendamento, hora_agendamento, especialidade_med, observacao, usuario_id) VALUES (?, ?, ?, ?, ?, ?)";
+  db.query(query, [idpaciente, dataconsulta, hora, espmed, obser, userid], (err, result) => {
+    if (err) {
+      console.error("Erro ao inserir os dados no banco de dados: " + err);
+      res.status(500).json({ error: "Erro ao agendar consulta" });
+    } else {
+      console.log("Dados inseridos com sucesso na tabela agendamentos.");
+      res.status(200).json({ message: "Consulta agendada com sucesso" });
+    }
+  });
+});
+
+
+/* ------------------------------###-------------------------------- */
+
 app.post("/validate", async (req, res) => {
   const { token } = req.body;
 
