@@ -283,6 +283,21 @@ app.post("/agendar", (req, res) => {
   });
 });
 
+app.get("/agendamentos", (req, res) => {
+  // Exemplo de código para buscar os agendamentos na tabela agendamentos
+  const query = "SELECT * FROM agendamentos";
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Erro ao buscar os agendamentos no banco de dados: " + err);
+      res.status(500).json({ error: "Erro ao buscar agendamentos" });
+    } else {
+      console.log("Agendamentos encontrados com sucesso.");
+      res.status(200).json(result); // Retorna os dados dos agendamentos em formato JSON
+    }
+  });
+});
+
+
 
 /* ------------------------------###-------------------------------- */
 
