@@ -268,11 +268,12 @@ app.post("/agendar", (req, res) => {
   const dataconsulta = req.body.dataconsulta;
   const hora = req.body.hora;
   const espmed = req.body.espmed;
+  const status_agendamento = req.body.status_agendamento;
   const obser = req.body.obser;
 
   // Exemplo de código para inserir dados na tabela agendamentos
-  const query = "INSERT INTO agendamentos (paciente_id, data_agendamento, hora_agendamento, especialidade_med, observacao, usuario_id) VALUES (?, ?, ?, ?, ?, ?)";
-  db.query(query, [idpaciente, dataconsulta, hora, espmed, obser, userid], (err, result) => {
+  const query = "INSERT INTO agendamentos (paciente_id, data_agendamento, hora_agendamento, especialidade_med, status_agendamento, observacao, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  db.query(query, [idpaciente, dataconsulta, hora, espmed,status_agendamento, obser, userid], (err, result) => {
     if (err) {
       console.error("Erro ao inserir os dados no banco de dados: " + err);
       res.status(500).json({ error: "Erro ao agendar consulta" });
